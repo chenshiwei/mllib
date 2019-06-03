@@ -20,7 +20,7 @@ object RandomForest extends App {
 
   }
   import spark.implicits._
-  val data = spark.read.format("csv").option("header", true).load("src/main/resources/mllib//iris.dat").rdd
+  val data = spark.read.format("csv").option("header", true).load("../mllib/src/main/resources/mllib//iris.dat").rdd
     .map(row => LabeledPoint(getClazz(row.getString(4)), Vectors.dense(row.getString(0).toDouble, 
         row.getString(1).toDouble, row.getString(2).toDouble, row.getString(3).toDouble)))
     .toDF("label", "features")

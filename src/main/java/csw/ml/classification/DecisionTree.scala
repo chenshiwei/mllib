@@ -1,5 +1,8 @@
 package csw.ml.classification
 
+import org.apache.spark.ml.evaluation.{BinaryClassificationEvaluator, ClusteringEvaluator, RegressionEvaluator}
+import org.apache.spark.ml.{PipelineModel, Transformer}
+
 object DecisionTree extends App {
 	import org.apache.spark.ml.Pipeline
 	import org.apache.spark.ml.classification.DecisionTreeClassificationModel
@@ -46,7 +49,7 @@ object DecisionTree extends App {
 
 	// Train model. This also runs the indexers.
 	val model = pipeline.fit(trainingData)
-
+	model.write.overwrite()
 	// Make predictions.
 	val predictions = model.transform(testData)
 
@@ -55,13 +58,21 @@ object DecisionTree extends App {
 
 	predictions.show()
 	// Select (prediction, true label) and compute test error.
-	val evaluator = new MulticlassClassificationEvaluator()
-		.setLabelCol("indexedLabel")
-		.setPredictionCol("prediction")
-		.setMetricName("accuracy")
-	val accuracy = evaluator.evaluate(predictions)
-	println("Test Error = " + (1.0 - accuracy))
 
-	val treeModel = model.stages(2).asInstanceOf[DecisionTreeClassificationModel]
-	println("Learned classification tree model:\n" + treeModel.toDebugString)
+	val evaluator = new MulticlassClassificationEvaluator()
+//		.setLabelCol("indexedLabel")
+//		.setPredictionCol("prediction")
+//		.setMetricName("accuracy")
+//	val accuracy = evaluator.evaluate(predictions)
+//	println("Test Error = " + (1.0 - accuracy))
+//	val evaluator = new ClusteringEvaluator()
+//  .setFeaturesCol()
+//  .setMetricName()
+	//		.setLabelCol("indexedLabel")
+	//		.setPredictionCol("prediction")
+	//		.setMetricName("accuracy")
+	//	val accuracy = evaluator.evaluate(predictions)
+	//	println("Test Error = " + (1.0 - accuracy))
+//	val treeModel = model.stages(2).asInstanceOf[DecisionTreeClassificationModel]
+//	println("Learned classification tree model:\n" + treeModel.toDebugString)
 }

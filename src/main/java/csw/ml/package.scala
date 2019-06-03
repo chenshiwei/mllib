@@ -15,4 +15,4 @@ package object classification extends BaseConfig
 package object clustering extends BaseConfig
 package object recommendation extends BaseConfig
 package object validation extends BaseConfig
- 
+package object stat extends BaseConfig

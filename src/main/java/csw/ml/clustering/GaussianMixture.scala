@@ -8,7 +8,7 @@ object GaussianMixture extends App {
 
 	// Trains Gaussian Mixture Model
 	val gmm = new GaussianMixture()
-		.setK(2)
+		.setK(4)
 
 	val model = gmm.fit(dataset)
 
@@ -17,4 +17,5 @@ object GaussianMixture extends App {
 		println(s"Gaussian $i:\nweight=${model.weights(i)}\n" +
 			s"mu=${model.gaussians(i).mean}\nsigma=\n${model.gaussians(i).cov}\n")
 	}
+	model.transform(dataset).show(false)
 }

@@ -7,6 +7,8 @@ object LinearRegression extends App {
 	val training = spark.read.format("libsvm")
 		.load("../mllib/src/main/resources/mllib/sample_linear_regression_data.txt")
 
+	training.show(1000,false)
+
 	val lr = new LinearRegression()
 		.setMaxIter(10)
 		.setRegParam(0.3)

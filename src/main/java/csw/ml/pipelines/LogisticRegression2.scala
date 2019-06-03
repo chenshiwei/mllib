@@ -1,5 +1,8 @@
 package csw.ml.pipelines
 
+import org.apache.spark.ml.PipelineModel
+import org.apache.spark.ml.evaluation.BinaryClassificationEvaluator
+
 object LogisticRegression2 extends App {
 
   import org.apache.spark.ml.Pipeline
@@ -14,7 +17,7 @@ object LogisticRegression2 extends App {
     (3L, "hadoop mapreduce", 0.0)
   )).toDF("id", "text", "label")
 
-//  training.show()
+  //  training.show()
 
   // Configure an ML pipeline, which consists of three stages: tokenizer, hashingTF, and lr.
   val tokenizer = new Tokenizer()
@@ -34,17 +37,17 @@ object LogisticRegression2 extends App {
     .setMaxIter(10)
     .setRegParam(0.001)
 
-//  val model = lr.fit(hashingTF.transform(tokenizer.transform(training)))
+  //  val model = lr.fit(hashingTF.transform(tokenizer.transform(training)))
 
   val pipeline = new Pipeline()
     .setStages(Array(tokenizer, hashingTF, lr))
 
   //// Fit the pipeline to training documents.
-  val model = pipeline.fit(training)
+  val model: PipelineModel = pipeline.fit(training)
   //
   //// Now we can optionally save the fitted pipeline to disk
   //model.write.overwrite().save("tmp/spark-logistic-regression-model")
-//  val samePipeline = Pipeline.load("/tmp/unfit-lr-model")
+  //  val samePipeline = Pipeline.load("/tmp/unfit-lr-model")
   //
   //// We can also save this unfit pipeline to disk
   //pipeline.write.overwrite().save("tmp/unfit-lr-model")
@@ -54,14 +57,20 @@ object LogisticRegression2 extends App {
   //
   //// Prepare test documents, which are unlabeled (id, text) tuples.
   val test = spark.createDataFrame(Seq(
-    (4L, "spark i j k"),
-    (5L, "l m n"),
-    (6L, "spark hadoop spark"),
-    (7L, "apache hadoop")
-  )).toDF("id", "text")
+    (4L, "spark i j k",1.0),
+    (5L, "l m n",0.0),
+    (6L, "spark hadoop spark",1.0),
+    (7L, "apache hadoop",0.0)
+  )).toDF("id", "text","label")
   //
   //// Make predictions on test documents.
   model.transform(test).show()
+
+  val bce = new BinaryClassificationEvaluator()
+  bce.setRawPredictionCol("prediction")
+    .setLabelCol("label")
+//    .setMetricName("accuracy")
+  println(bce.evaluate(model.transform(test)))
   //  .select("id", "te
   // xt", "probability", "prediction")
   //  .collect()

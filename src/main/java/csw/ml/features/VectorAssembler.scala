@@ -12,6 +12,7 @@ object VectorAssembler extends App {
 		.setOutputCol("features")
 
 	val output = assembler.transform(dataset)
+	output.show()
 	println("Assembled columns 'hour', 'mobile', 'userFeatures' to vector column 'features'")
 	output.select("features", "clicked").show(false)
 }

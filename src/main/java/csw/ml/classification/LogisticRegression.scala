@@ -27,6 +27,7 @@ object LogisticRegression extends App {
 		.setFamily("multinomial")
 
 	val mlrModel = mlr.fit(training)
+	mlrModel.write
 
 	// Print the coefficients and intercepts for logistic regression with multinomial family
 	println(s"Multinomial coefficients: ${mlrModel.coefficientMatrix}")

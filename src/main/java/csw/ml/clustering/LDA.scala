@@ -8,7 +8,7 @@ object LDA extends App {
 		.load("../mllib/src/main/resources/mllib/sample_lda_libsvm_data.txt")
 
 	// Trains a LDA model.
-	val lda = new LDA().setK(10).setMaxIter(10)
+	val lda = new LDA().setK(6).setMaxIter(10)
 
 	val model = lda.fit(dataset)
 
@@ -18,7 +18,7 @@ object LDA extends App {
 	println(s"The upper bound bound on perplexity: $lp")
 
 	// Describe topics.
-	val topics = model.describeTopics(3)
+	val topics = model.describeTopics(10)
 	println("The topics described by their top-weighted terms:")
 	topics.show(false)
 

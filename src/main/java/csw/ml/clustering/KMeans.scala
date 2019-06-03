@@ -7,7 +7,7 @@ object KMeans extends App {
 	val dataset = spark.read.format("libsvm").load("../mllib/src/main/resources/mllib/sample_kmeans_data.txt")
 
 	// Trains a k-means model.
-	val kmeans = new KMeans().setK(2).setSeed(1L)
+	val kmeans = new KMeans().setK(3).setSeed(1L)
 
 
 	val model = kmeans.fit(dataset)
@@ -19,4 +19,5 @@ object KMeans extends App {
 	// Shows the result.
 	println("Cluster Centers: ")
 	model.clusterCenters.foreach(println)
+	model.transform(dataset).show(false)
 }
