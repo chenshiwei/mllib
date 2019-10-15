@@ -6,10 +6,13 @@ object BisectingKMeans extends App {
 	// Loads data.
 	val dataset = spark.read.format("libsvm").load("../mllib/src/main/resources/mllib/sample_kmeans_data.txt")
 
+	dataset.show(false)
 	// Trains a bisecting k-means model.
 	val bkm = new BisectingKMeans().setK(2).setSeed(1)
 
 	val model = bkm.fit(dataset)
+
+	model.transform(dataset).show(false)
 
 	// Evaluate clustering.
 	val cost = model.computeCost(dataset)

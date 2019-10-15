@@ -1,11 +1,12 @@
-package csw.ml.pipelines
+package org.apache.spark.ml.my
 
+import org.apache.spark.SparkConf
 import org.apache.spark.ml.Transformer
 import org.apache.spark.ml.param.{Param, ParamMap}
 import org.apache.spark.ml.util.{DefaultParamsReadable, DefaultParamsWritable, Identifiable}
 import org.apache.spark.sql.functions.{col, udf}
 import org.apache.spark.sql.types.{DoubleType, StructField, StructType}
-import org.apache.spark.sql.{DataFrame, Dataset}
+import org.apache.spark.sql.{DataFrame, Dataset, SparkSession}
 
 /**
   * 作用:
@@ -30,7 +31,7 @@ class MyTransformer(override val uid: String) extends Transformer with DefaultPa
 
   override def transform(dataset: Dataset[_]): DataFrame = {
     val outputSchema = transformSchema(dataset.schema)
-    val t = udf { score: Double => if (score >= 60) 1.0 else 0.0 }
+    val t = udf { score: Double => if (score > 170) 1.0 else 0.0 }
     val metadata = outputSchema($(outputCol)).metadata
     dataset.select(col("*"), t(col($(inputCol))).as($(outputCol), metadata))
   }
@@ -38,7 +39,7 @@ class MyTransformer(override val uid: String) extends Transformer with DefaultPa
   override def transformSchema(schema: StructType): StructType = {
     if (schema.fieldNames.contains($(outputCol)))
       throw new IllegalArgumentException(s"Output column ${$(outputCol)} already exists.")
-    schema.add(StructField($(outputCol), DoubleType, false))
+    schema.add(StructField($(outputCol), DoubleType, nullable = false))
   }
 }
 
@@ -47,10 +48,12 @@ object MyTransformer extends DefaultParamsReadable[MyTransformer] {
 
   //just for test
   def main(args: Array[String]): Unit = {
-    val dataset = spark.createDataFrame(
-      Seq(("mike", 72), ("tom", 82), ("wade", 59), ("csw", 100))).toDF("name", "score")
+    val sparkConf = new SparkConf().setMaster("local[4]").setAppName("MyTransformer")
+    val spark = SparkSession.builder().config(sparkConf).getOrCreate()
+    val dataFrame = spark.createDataFrame(
+      Seq(("mike", 166.0), ("tom", 175.0), ("wade", 163.0), ("csw", 185.0))).toDF("name", "height")
     val myTransformer = new MyTransformer
-    myTransformer.setInputCol("score").setOutputCol("pass")
-    myTransformer.transform(dataset).show()
+    myTransformer.setInputCol("height").setOutputCol("h170")
+    myTransformer.transform(dataFrame).show()
   }
 }

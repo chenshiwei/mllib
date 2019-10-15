@@ -6,6 +6,7 @@ import org.apache.spark.sql.SparkSession
 trait BaseConfig {
 	val sparkConf = new SparkConf().setMaster("local[4]").setAppName("mllib")
 	val spark = SparkSession.builder().config(sparkConf).getOrCreate()
+
 }
 
 package object pipelines extends BaseConfig
